@@ -23,12 +23,13 @@ RUN apt-get update && \
 
 COPY . .
 
-# Set up static files
-RUN python manage.py collectstatic --noinput
+# Create static files directory and set permissions
+RUN mkdir -p /app/staticfiles && \
+    chmod -R 755 /app/staticfiles
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/health/ || exit 1
 
 # Run Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "--timeout", "120", "mlapi.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "4", "--timeout", "120", "--access-logfile", "-", "mlapi.wsgi:application"]

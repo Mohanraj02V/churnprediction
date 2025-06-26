@@ -1,18 +1,49 @@
+# services:
+#   - type: web
+#     name: ml-api
+#     runtime: docker
+#     build:
+#       dockerfile: Dockerfile
+#     env: python
+#     envVars:
+#       - key: DJANGO_SETTINGS_MODULE
+#         value: mlapi.settings.production
+#       - key: DJANGO_SECRET_KEY
+#         generateValue: true
+#       - key: DJANGO_ALLOWED_HOSTS
+#         value: ml-api.onrender.com
+#       - key: PYTHONUNBUFFERED
+#         value: 1
+#     plan: starter
+#     healthCheckPath: /health/
+
 services:
   - type: web
     name: ml-api
     runtime: docker
-    build:
-      dockerfile: Dockerfile
-    env: python
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: mlapi.settings.production
       - key: DJANGO_SECRET_KEY
         generateValue: true
       - key: DJANGO_ALLOWED_HOSTS
-        value: ml-api.onrender.com
-      - key: PYTHONUNBUFFERED
-        value: 1
+        value: your-render-app-url.onrender.com
+      - key: MYSQLHOST
+        fromDatabase:
+          name: mlapi-mysql
+          property: hostname
+      - key: MYSQLDATABASE
+        fromDatabase:
+          name: mlapi-mysql
+          property: database
+      - key: MYSQLUSER
+        fromDatabase:
+          name: mlapi-mysql
+          property: user
+      - key: MYSQLPASSWORD
+        fromDatabase:
+          name: mlapi-mysql
+          property: password
     plan: starter
     healthCheckPath: /health/
+    autoDeploy: true
